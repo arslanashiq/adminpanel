@@ -32,7 +32,7 @@ export const AddProductUi = () => {
 
     const [ProductName, setProductName] = useState('')
     const [Category, setCategory] = useState([])
-    const [SelectedCategory, setSelectedCategory] = useState('Select 1')
+    const [SelectedCategory, setSelectedCategory] = useState('Starters')
     const [ImageUrl, setImageUrl] = useState('')
     const [Size, setSize] = useState([])
     const [Price, setPrice] = useState('')
@@ -46,7 +46,7 @@ export const AddProductUi = () => {
 
     useLayoutEffect(() => {
         fetchData()
-    })
+    }, [])
 
     const MenuProps = {
         PaperProps: {
@@ -186,13 +186,15 @@ export const AddProductUi = () => {
                                 labelId="demo-multiple-name-label"
                                 id="demo-multiple-name"
                                 value={SelectedCategory}
-                                label={"Category"}
+                                label="Category"
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 MenuProps={MenuProps}
 
                             >
-                                {Category.map((item, index) => (
-                                    <MenuItem value={item.name}>{index + 1}.  {item.name}</MenuItem>
+
+                                {Category.map((item, index) =>(
+
+                                <MenuItem value={item.name}>{index + 1}.  {item.name}</MenuItem>
                                 ))}
 
                             </Select>

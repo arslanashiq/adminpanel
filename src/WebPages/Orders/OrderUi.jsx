@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
-import {URL} from '../../Constants/DataBaseURL';
+import { URL } from '../../Constants/DataBaseURL';
 
 export const OrderUi = () => {
     const navigate = useNavigate();
@@ -25,13 +25,12 @@ export const OrderUi = () => {
 
     useLayoutEffect(() => {
         fetchData()
-    }, [Change])
-  
+    }, [])
+
 
 
     const fetchData = () => {
-        console.log(rows)
-        const url = URL.My_Database_Url +'orders';
+        const url = URL.My_Database_Url + 'orders';
         if (rows.length == 0) {
 
             fetch(url, {
@@ -68,12 +67,23 @@ export const OrderUi = () => {
         }
     }
 
+    const checkstatus = (status) => {
+        if (status == "Pending") {
+            return "Waiting";
+        }
+        else if (status == "Waiting") {
+            return "Completed"
+        }
+        else if (status == "Completed") {
+            return "Delivered"
+        }
+    }
 
-    const handleAccept = (row) => {
+    const handleAccept = (row, status) => {
         console.log(row.id)
-        const url = URL.My_Database_Url +'orders/' + row.id;
+        const url = URL.My_Database_Url + 'orders/' + row.id;
         const UploadDataCredentials = {
-            status: "Waiting"
+            status: status
         };
         fetch(url, {
             method: 'PUT',
@@ -93,6 +103,7 @@ export const OrderUi = () => {
                     // setrows(responseData.orderlist);
                     setChange(!Change);
                     console.log(ShowTable, Change)
+
                 }
             })
             .catch(error => {
@@ -101,21 +112,46 @@ export const OrderUi = () => {
 
 
     }
-    const handleReject = () => {
+    const handleReject = (id, index) => {
+        const url = URL.My_Database_Url + 'orders/' + id;
+        fetch(url, {
+            method: 'DELETE',
+        })
+            .then(response => response.text())
+            .then(async responseText => {
+                let responseData = JSON.parse(responseText);
+                if (responseData.status == 200) {
+                    console.log('Data Deleted Successfully');
+                    rows.splice(index, 1);
+                    setChange(!Change)
+
+                } else {
+                    console.log('fail');
+                }
+            })
+            .catch(error => {
+                console.log(error, 'error from APi UploadData1212');
+            });
+
 
     }
+    useEffect(() => {
+    }, [Change])
+
 
     const theme = createTheme();
 
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.white,
-        },
+            backgroundColor: "#1976D2",
+            fontWeight: "600",
+        }, color: theme.palette.common.white,
+
         [`&.${tableCellClasses.body}`]: {
             fontSize: 14,
-        },
+            color: theme.palette.common.black
+        }, 
     }));
 
     const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -145,8 +181,7 @@ export const OrderUi = () => {
                                 <StyledTableCell align="center">Location</StyledTableCell>
                                 <StyledTableCell align="center">Phone #</StyledTableCell>
                                 <StyledTableCell align="center">Status</StyledTableCell>
-                                <StyledTableCell align="center"> </StyledTableCell>
-                                <StyledTableCell align="center"> </StyledTableCell>
+                                <StyledTableCell align="center"> Actions</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -159,15 +194,16 @@ export const OrderUi = () => {
                                     <StyledTableCell align="center">{row.location}</StyledTableCell>
                                     <StyledTableCell align="center">{row.status}</StyledTableCell>
 
-                                    <StyledTableCell align="center">{row.status == "Pending" &&
-                                        <Button onClick={() => { 
-                                            row.status="Waiting"
-                                            handleAccept(row) }}
-                                            size='small' variant="contained">Accept</Button>}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
+                                    <StyledTableCell align="center">{row.status != "Delivered" &&
+                                        <Button sx={{ marginRight: 2 }} onClick={() => {
+                                            let status = checkstatus(row.status)
+                                            handleAccept(row, status)
+                                            row.status = status
+                                        }}
+                                            size='small' variant="contained">{checkstatus(row.status)}</Button>}
+
                                         {row.status == "Pending" && <Button onClick={() => {
-                                            handleReject(row)
+                                            handleReject(row.id, index)
                                         }} size='small' color='error' variant="contained">Reject</Button>}</StyledTableCell>
 
                                 </StyledTableRow>

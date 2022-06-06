@@ -9,13 +9,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import {URL} from '../../Constants/DataBaseURL';
+import { URL } from '../../Constants/DataBaseURL';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 export const UserUi = () => {
     const [rows, setrows] = useState([])
     const [ShowTable, setShowTable] = useState(false)
     useLayoutEffect(() => {
-        const url = URL.My_Database_Url +'users';
+        const url = URL.My_Database_Url + 'users';
         if (rows.length == 0) {
             fetch(url, {
                 method: 'GET',
@@ -56,11 +56,13 @@ export const UserUi = () => {
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.white,
-        },
+            backgroundColor: "#1976D2",
+            fontWeight: "600",
+        }, color: theme.palette.common.white,
+
         [`&.${tableCellClasses.body}`]: {
             fontSize: 14,
+            color: theme.palette.common.black
         },
     }));
 
