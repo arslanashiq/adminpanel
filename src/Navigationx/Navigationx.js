@@ -7,9 +7,11 @@ import Users from "../WebPages/Users/Users";
 import Product from "../WebPages/Product/Product";
 import Category from "../WebPages/Category/Category";
 import AddProduct from "../WebPages/Add-Product/AddProduct";
+import AddCategory from "../WebPages/Add-Category/AddCategory";
 import Recent from "../WebPages/Recent/Recent";
 import Recomended from "../WebPages/Recomended/Recomended";
 import EditProduct from "../WebPages/EditProduct/Edit";
+import EditCategory from "../WebPages/EditCategory/Edit";
 import EditRecent from "../WebPages/EditRecent/Edit";
 import EditRecomended from "../WebPages/EditRecomended/Edit";
 
@@ -43,6 +45,13 @@ export const Navigationx = () => {
           element={<AddProduct />}
         />
       )}
+      {localStorage.getItem("userinfo") && (
+        <Route
+          path="/addcategory"
+          caseSensitive={false}
+          element={<AddCategory />}
+        />
+      )}
 
       {localStorage.getItem("userinfo") && (
         <Route
@@ -65,6 +74,14 @@ export const Navigationx = () => {
           path="/edit/:id"
           caseSensitive={false}
           element={<EditProduct />}
+        />
+      )}
+
+      {localStorage.getItem("userinfo") && (
+        <Route
+          path="/editcategory/:id"
+          caseSensitive={false}
+          element={<EditCategory />}
         />
       )}
 

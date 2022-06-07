@@ -22,7 +22,7 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { red } from '@mui/material/colors';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from "react-router-dom";
-import {URL} from '../../Constants/DataBaseURL';
+import { URL } from '../../Constants/DataBaseURL';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 export const RecentUi = () => {
@@ -56,7 +56,7 @@ export const RecentUi = () => {
 
 
     const fetchData = () => {
-        const url = URL.My_Database_Url +'recent';
+        const url = URL.My_Database_Url + 'recent';
         if (rows.length == 0) {
             fetch(url, {
                 method: 'GET',
@@ -72,6 +72,15 @@ export const RecentUi = () => {
 
 
                         });
+                        setTimeout(() => {
+                            const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
+                            console.log("Data is : ", data);
+
+                            setrows(data)
+                            console.log(rows)
+
+                            setShowTable(true)
+                        }, 1200);
 
                     } else {
                         console.log('fail');
@@ -80,15 +89,7 @@ export const RecentUi = () => {
                 .catch(error => {
                     console.log(error, 'error from APi UploadData1212');
                 });
-            setTimeout(() => {
-                const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
-                console.log("Data is : ", data);
 
-                setrows(data)
-                console.log(rows)
-
-                setShowTable(true)
-            }, 1200);
         }
     }
     useLayoutEffect(() => {
@@ -99,8 +100,8 @@ export const RecentUi = () => {
     useEffect(() => {
     }, [Delete])
 
-    const handledelete = (id,index) => {
-        const url = URL.My_Database_Url +'recent/' + id;
+    const handledelete = (id, index) => {
+        const url = URL.My_Database_Url + 'recent/' + id;
         fetch(url, {
             method: 'DELETE',
         })
@@ -165,7 +166,7 @@ export const RecentUi = () => {
                                                 </IconButton>
 
                                                 <IconButton onClick={() => {
-                                                    handledelete(item.id,index)
+                                                    handledelete(item.id, index)
 
                                                 }} aria-label="settings">
                                                     <Tooltip title="Delete">

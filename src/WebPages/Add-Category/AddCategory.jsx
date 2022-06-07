@@ -1,4 +1,5 @@
 import * as React from 'react';
+// import { useLayoutEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -28,11 +29,12 @@ import ProductionQuantityLimitsTwoToneIcon from '@mui/icons-material/ProductionQ
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from "react-router-dom";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 // stables
-import RecentUi from "./RecentUi";
+import AddCategoryUi from "./AddCategoryUi";
+import { Category } from '@mui/icons-material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 const drawerWidth = 240;
@@ -83,7 +85,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
+
+
+
 function DashboardContent() {
+
 
   const navigate = useNavigate();
 
@@ -121,7 +127,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Recents
+              Add Item
 
             </Typography>
             <IconButton onClick={() => {
@@ -239,7 +245,7 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <RecentUi />
+            <AddCategoryUi />
           </Container>
         </Box>
       </Box>
@@ -247,6 +253,6 @@ function DashboardContent() {
   );
 }
 
-export default function Product() {
+export default function AddProduct() {
   return <DashboardContent />;
 }

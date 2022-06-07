@@ -30,6 +30,12 @@ export const UserUi = () => {
                             const row = { id: item.id, name: item.first_name + " " + item.last_name, email: item.email, isAdmin: item.isAdmin }
                             rows.push(row)
                         });
+                        setTimeout(() => {
+                            const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
+                            console.log("Data is : ", data);
+                            setrows(data)
+                            setShowTable(true)
+                        }, 1000);
 
                     } else {
                         console.log('fail');
@@ -40,15 +46,6 @@ export const UserUi = () => {
                 });
 
         }
-    }, [])
-    useEffect(() => {
-
-        setTimeout(() => {
-            const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
-            console.log("Data is : ", data);
-            setrows(data)
-            setShowTable(true)
-        }, 1000);
     }, [])
 
     const theme = createTheme();

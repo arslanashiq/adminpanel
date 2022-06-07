@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
-import {URL} from '../../Constants/DataBaseURL';
+import { URL } from '../../Constants/DataBaseURL';
 
 import Tooltip from '@mui/material/Tooltip';
 
@@ -56,7 +56,7 @@ export const ProductUi = () => {
 
 
     const fetchData = () => {
-        const url = URL.My_Database_Url +'products';
+        const url = URL.My_Database_Url + 'products';
         if (rows.length == 0) {
             fetch(url, {
                 method: 'GET',
@@ -69,9 +69,16 @@ export const ProductUi = () => {
                         responseData.productlist.map(item => {
                             let row = item;
                             rows.push(row)
-
-
                         });
+                        setTimeout(() => {
+                            const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
+                            console.log("Data is : ", data);
+
+                            setrows(data)
+                            console.log(rows)
+
+                            setShowTable(true)
+                        }, 1200);
 
                     } else {
                         console.log('fail');
@@ -80,15 +87,7 @@ export const ProductUi = () => {
                 .catch(error => {
                     console.log(error, 'error from APi UploadData1212');
                 });
-            setTimeout(() => {
-                const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
-                console.log("Data is : ", data);
 
-                setrows(data)
-                console.log(rows)
-
-                setShowTable(true)
-            }, 1200);
         }
     }
     useLayoutEffect(() => {
@@ -99,8 +98,8 @@ export const ProductUi = () => {
     useEffect(() => {
     }, [Delete])
 
-    const handledelete = (id,index) => {
-        const url = URL.My_Database_Url +'products/' + id;
+    const handledelete = (id, index) => {
+        const url = URL.My_Database_Url + 'products/' + id;
         fetch(url, {
             method: 'DELETE',
         })
@@ -165,7 +164,7 @@ export const ProductUi = () => {
                                                 </IconButton>
 
                                                 <IconButton onClick={() => {
-                                                    handledelete(item.id,index)
+                                                    handledelete(item.id, index)
 
                                                 }} aria-label="settings">
                                                     <Tooltip title="Delete">

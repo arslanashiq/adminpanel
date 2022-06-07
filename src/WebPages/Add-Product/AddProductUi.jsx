@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Container, Typography } from '@mui/material';
 // import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 
 import AddIcon from '@mui/icons-material/Add';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import Select from '@mui/material/Select';
 import { URL } from '../../Constants/DataBaseURL';
@@ -42,11 +43,17 @@ export const AddProductUi = () => {
     const [Ingredient, setIngredient] = useState([])
     const [ingname, setingname] = useState('')
     const [UploadType, setUploadType] = useState('products')
-
-
+    const [Del, setDel] = useState(true)
+    const [ShowForm, setShowForm] = useState(false)
+    const [Loading, setLoading] = useState(false)
     useLayoutEffect(() => {
         fetchData()
     }, [])
+
+    useEffect(() => {
+
+    }, [Del])
+
 
     const MenuProps = {
         PaperProps: {
@@ -93,12 +100,14 @@ export const AddProductUi = () => {
             .then(async responseText => {
                 let responseData = JSON.parse(responseText);
                 console.log(responseData)
+                setLoading(false)
                 if (responseData.status === 200) {
                     console.log("Data Uploaded")
                     redirectCheck();
                 }
             })
             .catch(error => {
+                setLoading(false)
                 console.log(error, 'error from APi UploadData1212');
             });
 
@@ -117,7 +126,7 @@ export const AddProductUi = () => {
                         console.log('Data Found Successfully');
                         console.log(responseData)
                         setCategory(responseData.foodcategoryList)
-
+                        setShowForm(true)
 
                     } else {
                         console.log('fail');
@@ -140,158 +149,164 @@ export const AddProductUi = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <Stack spacing={2} sx={{ marginBottom: 4 }} direction={"row"}>
-                <label >Select Type</label>
-                <Select
-                    sx={{ height: 30, width: 150 }}
-                    labelId="demo-multiple-name-label"
-                    id="demo-multiple-name"
-                    value={UploadType}
-                    onChange={(e) => setUploadType(e.target.value)}
-                    MenuProps={MenuProps}
+            {ShowForm && <div>
+                <Stack spacing={2} sx={{ marginBottom: 4 }} direction={"row"}>
+                    <label >Select Type</label>
+                    <Select
+                        sx={{ height: 30, width: 150 }}
+                        labelId="demo-multiple-name-label"
+                        id="demo-multiple-name"
+                        value={UploadType}
+                        onChange={(e) => setUploadType(e.target.value)}
+                        MenuProps={MenuProps}
 
-                >
-                    <MenuItem value='products'>Product</MenuItem>
-                    <MenuItem value='recent'>Recent</MenuItem>
-                    <MenuItem value='recomended'>Recomended</MenuItem>
+                    >
+                        <MenuItem value='products'>Product</MenuItem>
+                        <MenuItem value='recent'>Recent</MenuItem>
+                        <MenuItem value='recomended'>Recomended</MenuItem>
 
-                </Select>
-            </Stack>
-            <Container component="main" >
-                <Typography sx={{ marginBottom: 4, paddingTop: 2, fontWeight: "600" }} variant='h5'>Enter Product Details :</Typography>
+                    </Select>
+                </Stack>
+                <Container component="main" >
+                    <Typography sx={{ marginBottom: 4, paddingTop: 2, fontWeight: "600" }} variant='h5'>Enter Product Details :</Typography>
 
-                <Stack direction={"row"}>
+                    <Stack direction={"row"}>
 
-                    <Stack spacing={2}>
-                        <Stack spacing={2} direction={"row"}>
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Name of Product</Typography>
-                            <TextField sx={{ paddingBottom: 2 }} value={ProductName} onChange={(e) => setProductName(e.target.value)} label="Product Name" variant="outlined" />
-                        </Stack>
+                        <Stack spacing={2}>
+                            <Stack spacing={2} direction={"row"}>
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Name of Product</Typography>
+                                <TextField sx={{ paddingBottom: 2 }} value={ProductName} onChange={(e) => setProductName(e.target.value)} label="Product Name" variant="outlined" />
+                            </Stack>
 
-                        <Stack spacing={2} direction={"row"}>
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Price of Product</Typography>
-                            <TextField sx={{ paddingBottom: 2 }} value={Price} onChange={(e) => setPrice(e.target.value)} label="Price" variant="outlined" />
-                        </Stack>
+                            <Stack spacing={2} direction={"row"}>
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Price of Product</Typography>
+                                <TextField sx={{ paddingBottom: 2 }} value={Price} onChange={(e) => setPrice(e.target.value)} label="Price" variant="outlined" />
+                            </Stack>
 
-                        <Stack spacing={2} direction={"row"}>
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'> Url of Product Image  </Typography>
-                            <TextField sx={{ paddingBottom: 2, width: 400 }} value={ImageUrl} onChange={(e) => setImageUrl(e.target.value)} label="Image URL" variant="outlined" />
-                        </Stack>
+                            <Stack spacing={2} direction={"row"}>
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'> Url of Product Image  </Typography>
+                                <TextField sx={{ paddingBottom: 2, width: 400 }} value={ImageUrl} onChange={(e) => setImageUrl(e.target.value)} label="Image URL" variant="outlined" />
+                            </Stack>
 
 
 
-                        <Stack spacing={2} direction={"row"}>
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Category</Typography>
-                            <Select
-                                labelId="demo-multiple-name-label"
-                                id="demo-multiple-name"
-                                value={SelectedCategory}
-                                label="Category"
-                                onChange={(e) => setSelectedCategory(e.target.value)}
-                                MenuProps={MenuProps}
+                            <Stack spacing={2} direction={"row"}>
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Category</Typography>
+                                <Select
+                                    labelId="demo-multiple-name-label"
+                                    id="demo-multiple-name"
+                                    value={SelectedCategory}
+                                    label="Category"
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    MenuProps={MenuProps}
 
-                            >
+                                >
 
-                                {Category.map((item, index) =>(
+                                    {Category.map((item, index) => (
 
-                                <MenuItem value={item.name}>{index + 1}.  {item.name}</MenuItem>
+                                        <MenuItem value={item.name}>{index + 1}.  {item.name}</MenuItem>
+                                    ))}
+
+                                </Select>
+                            </Stack>
+
+                            <Stack spacing={2} direction={"row"}>
+
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Information of Product</Typography>
+                                <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={Info} onChange={(e) => setInfo(e.target.value)} label="Information" variant="outlined" />
+                            </Stack>
+
+
+
+                            {/* Sizes */}
+
+                            <Stack spacing={2} direction={"row"}>
+
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Product Size Detail</Typography>
+                                <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={sizename} onChange={(e) => setsizename(e.target.value)} label="Size Name" variant="outlined" />
+                                <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={sizeprice} onChange={(e) => setsizeprice(e.target.value)} label="Size Price" variant="outlined" />
+
+
+                                <AddIcon
+                                    sx={{ height: 40, paddingTop: 2 }}
+                                    onClick={() => {
+                                        console.log(Size)
+                                        if (sizename.length > 0 && parseFloat(sizeprice)) {
+                                            Size.push([sizename, sizeprice]);
+                                            setsizename('');
+                                            setsizeprice("");
+                                        }
+                                        else {
+                                            alert("Please Enter Correct Value")
+                                        }
+                                    }} color='info' />
+                            </Stack>
+                            <Stack direction={"column"}>
+                                {Size.length > 0 && <Typography sx={{ fontWeight: '800' }} varient='h6'>Sizes</Typography>}
+                                {Size.map((item, index) => (
+                                    <Stack spacing={3} direction={"row"}>
+                                        <label>{index + 1}) Name : {item[0]}</label>
+                                        <label>Price :  {item[1]}</label>
+                                        <RemoveCircleOutlineIcon onClick={() => { Size.splice(index, 1); setDel(!Del) }} pointer color='error' />
+                                    </Stack>
                                 ))}
+                            </Stack>
 
-                            </Select>
+
+
+                            {/* ingredients */}
+
+                            <Stack spacing={2} direction={"row"}>
+
+                                <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Product Ingredient Detail</Typography>
+                                <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={ingname} onChange={(e) => setingname(e.target.value)} label="Ingredient Name" variant="outlined" />
+
+
+                                <AddIcon
+                                    sx={{ height: 40, paddingTop: 2 }}
+                                    onClick={() => {
+                                        if (ingname.length > 3) {
+                                            Ingredient.push(ingname);
+                                            setingname('');
+                                        }
+                                        else {
+                                            alert("Invalid Values in Ingredient Name")
+                                        }
+                                    }} color='info' />
+                            </Stack>
+                            <Stack direction={"column"}>
+                                {Ingredient.length > 0 && <Typography sx={{ fontWeight: '800' }} varient='h6'>Ingredients Name</Typography>}
+                                {Ingredient.map((item, index) => (
+                                    <Stack spacing={3} direction={"row"}>
+                                        <label>{index + 1})  {item}</label>
+                                        <RemoveCircleOutlineIcon onClick={() => { Ingredient.splice(index, 1); setDel(!Del) }} pointer color='error' />
+                                    </Stack>
+                                ))}
+                            </Stack>
+
+
+
+                            <Button 
+                            disabled={Loading}
+                            onClick={() => {
+                                setLoading(true)
+                                uploadData()
+                            }} size='sm' variant="contained" startIcon={<AddIcon color='info' />}>
+                                Upload Data
+
+                            </Button>
+
                         </Stack>
-
-                        <Stack spacing={2} direction={"row"}>
-
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Information of Product</Typography>
-                            <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={Info} onChange={(e) => setInfo(e.target.value)} label="Information" variant="outlined" />
-                        </Stack>
-
-
-
-                        {/* Sizes */}
-
-                        <Stack spacing={2} direction={"row"}>
-
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Product Size Detail</Typography>
-                            <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={sizename} onChange={(e) => setsizename(e.target.value)} label="Size Name" variant="outlined" />
-                            <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={sizeprice} onChange={(e) => setsizeprice(e.target.value)} label="Size Price" variant="outlined" />
-
-
-                            <AddIcon
-                                sx={{ height: 40, paddingTop: 2 }}
-                                onClick={() => {
-                                    console.log(Size)
-                                    if (sizename.length > 0 && parseFloat(sizeprice)) {
-                                        Size.push([sizename, sizeprice]);
-                                        setsizename('');
-                                        setsizeprice("");
-                                    }
-                                    else {
-                                        alert("Please Enter Correct Value")
-                                    }
-                                }} color='info' />
-                        </Stack>
-                        <Stack direction={"column"}>
-                            {Size.length > 0 && <Typography sx={{ fontWeight: '800' }} varient='h6'>Sizes</Typography>}
-                            {Size.map((item, index) => (
-                                <Stack spacing={3} direction={"row"}>
-                                    <label>{index + 1}) Name : {item[0]}</label>
-                                    <label>Price :  {item[1]}</label>
-                                </Stack>
-                            ))}
-                        </Stack>
-
-
-
-                        {/* ingredients */}
-
-                        <Stack spacing={2} direction={"row"}>
-
-                            <Typography sx={{ width: 220, paddingTop: 2, fontWeight: "600" }} variant='subtitle1'>Enter Product Ingredient Detail</Typography>
-                            <TextField multiline sx={{ width: 300, paddingBottom: 2 }} value={ingname} onChange={(e) => setingname(e.target.value)} label="Ingredient Name" variant="outlined" />
-
-
-                            <AddIcon
-                                sx={{ height: 40, paddingTop: 2 }}
-                                onClick={() => {
-                                    if (ingname.length > 3) {
-                                        Ingredient.push(ingname);
-                                        setingname('');
-                                    }
-                                    else {
-                                        alert("Invalid Values in Ingredient Name")
-                                    }
-                                }} color='info' />
-                        </Stack>
-                        <Stack direction={"column"}>
-                            {Ingredient.length > 0 && <Typography sx={{ fontWeight: '800' }} varient='h6'>Ingredients Name</Typography>}
-                            {Ingredient.map((item, index) => (
-                                <Stack spacing={3} direction={"row"}>
-                                    <label>{index + 1})  {item}</label>
-                                </Stack>
-                            ))}
-                        </Stack>
-
-
-
-                        <Button onClick={() => {
-
-                            uploadData()
-                        }} size='sm' variant="contained" startIcon={<AddIcon color='info' />}>
-                            Upload Data
-
-                        </Button>
 
                     </Stack>
 
-                </Stack>
 
 
 
 
 
-
-            </Container>
+                </Container>
+            </div>}
         </ThemeProvider >
     );
 }

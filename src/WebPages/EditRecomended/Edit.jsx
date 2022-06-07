@@ -215,7 +215,15 @@ function DashboardContent() {
               <ListItemIcon>
                 <AddCircleIcon color='primary' />
               </ListItemIcon>
-              <ListItemText primary="Add" />
+              <ListItemText primary="Add Product" />
+            </ListItemButton>
+
+            {/* Add Category */}
+            <ListItemButton onClick={() => { navigate("/addcategory") }}>
+              <ListItemIcon>
+                <AddCircleIcon color='primary' />
+              </ListItemIcon>
+              <ListItemText primary="Add Category" />
             </ListItemButton>
 
 

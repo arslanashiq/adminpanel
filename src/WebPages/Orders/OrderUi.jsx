@@ -50,6 +50,12 @@ export const OrderUi = () => {
                                 rows.push(row)
                             }
                         });
+                        setTimeout(() => {
+                            const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
+                            console.log("Data is : ", data);
+                            setrows(data)
+                            setShowTable(true)
+                        }, 900);
 
                     } else {
                         console.log('fail');
@@ -58,12 +64,7 @@ export const OrderUi = () => {
                 .catch(error => {
                     console.log(error, 'error from APi UploadData1212');
                 });
-            setTimeout(() => {
-                const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
-                console.log("Data is : ", data);
-                setrows(data)
-                setShowTable(true)
-            }, 900);
+
         }
     }
 
@@ -151,7 +152,7 @@ export const OrderUi = () => {
         [`&.${tableCellClasses.body}`]: {
             fontSize: 14,
             color: theme.palette.common.black
-        }, 
+        },
     }));
 
     const StyledTableRow = styled(TableRow)(({ theme }) => ({

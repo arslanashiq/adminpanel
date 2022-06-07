@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
-import {URL} from '../../Constants/DataBaseURL';
+import { URL } from '../../Constants/DataBaseURL';
 
 import Tooltip from '@mui/material/Tooltip';
 
@@ -58,7 +58,7 @@ export const RecomendedUi = () => {
 
 
     const fetchData = () => {
-        const url = URL.My_Database_Url +'recomended';
+        const url = URL.My_Database_Url + 'recomended';
         if (rows.length == 0) {
             fetch(url, {
                 method: 'GET',
@@ -74,7 +74,15 @@ export const RecomendedUi = () => {
 
 
                         });
+                        setTimeout(() => {
+                            const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
+                            console.log("Data is : ", data);
 
+                            setrows(data)
+                            console.log(rows)
+
+                            setShowTable(true)
+                        }, 1200);
                     } else {
                         console.log('fail');
                     }
@@ -82,15 +90,7 @@ export const RecomendedUi = () => {
                 .catch(error => {
                     console.log(error, 'error from APi UploadData1212');
                 });
-            setTimeout(() => {
-                const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
-                console.log("Data is : ", data);
 
-                setrows(data)
-                console.log(rows)
-
-                setShowTable(true)
-            }, 1200);
         }
     }
     useLayoutEffect(() => {
@@ -101,8 +101,8 @@ export const RecomendedUi = () => {
     useEffect(() => {
     }, [Delete])
 
-    const handledelete = (id,index) => {
-        const url = URL.My_Database_Url +'recomended/' + id;
+    const handledelete = (id, index) => {
+        const url = URL.My_Database_Url + 'recomended/' + id;
         fetch(url, {
             method: 'DELETE',
         })
@@ -167,7 +167,7 @@ export const RecomendedUi = () => {
                                                 </IconButton>
 
                                                 <IconButton onClick={() => {
-                                                    handledelete(item.id,index)
+                                                    handledelete(item.id, index)
 
                                                 }} aria-label="settings">
                                                     <Tooltip title="Delete">

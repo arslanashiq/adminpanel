@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import {URL} from '../../Constants/DataBaseURL';
+import { URL } from '../../Constants/DataBaseURL';
 
 import Select from '@mui/material/Select';
 
@@ -61,7 +61,7 @@ export const Edit = () => {
 
 
     const uploadData = () => {
-        const url = URL.My_Database_Url +'recent/' + params.id;
+        const url = URL.My_Database_Url + 'recent/' + params.id;
         const UploadDataCredentials = {
             name: ProductName,
             category: SelectedCategory,
@@ -97,7 +97,7 @@ export const Edit = () => {
 
     }
     const fetchCategory = () => {
-        const url = URL.My_Database_Url +'foodcategories';
+        const url = URL.My_Database_Url + 'foodcategories';
         if (Category.length == 0) {
 
             fetch(url, {
@@ -128,7 +128,7 @@ export const Edit = () => {
     }
 
     const fetchproduct = (id) => {
-        const url = URL.My_Database_Url +'recent/' + id;
+        const url = URL.My_Database_Url + 'recent/' + id;
         let d;
 
         fetch(url, {
@@ -140,6 +140,18 @@ export const Edit = () => {
                 if (responseData.status == 200) {
                     console.log('Product Found Successfully');
                     d = responseData.product
+                    setTimeout(() => {
+                        console.log(d[0])
+                        setProductName(d[0].name)
+                        setPrice(d[0].price)
+                        setImageUrl(d[0].image)
+                        setSelectedCategory(d[0].category)
+                        setInfo(d[0].info)
+                        setSize(d[0].size)
+                        setIngredient(d[0].list ? d[0].list : []);
+                        setShowForm(true)
+
+                    }, 300);
                 } else {
                     console.log('fail');
                 }
@@ -147,18 +159,7 @@ export const Edit = () => {
             .catch(error => {
                 console.log(error, 'error from APi UploadData1212');
             });
-        setTimeout(() => {
-            console.log(d[0])
-            setProductName(d[0].name)
-            setPrice(d[0].price)
-            setImageUrl(d[0].image)
-            setSelectedCategory(d[0].category)
-            setInfo(d[0].info)
-            setSize(d[0].size)
-            setIngredient(d[0].list ? d[0].list : []);
-            setShowForm(true)
 
-        }, 300);
 
     }
 
