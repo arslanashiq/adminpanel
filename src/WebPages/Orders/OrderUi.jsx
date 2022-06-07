@@ -12,6 +12,9 @@ import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import { URL } from '../../Constants/DataBaseURL';
+import Stack from '@mui/material/Stack';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 export const OrderUi = () => {
     const navigate = useNavigate();
@@ -20,7 +23,7 @@ export const OrderUi = () => {
     const [DataChange, setDataChange] = useState(true)
     const [ShowTable, setShowTable] = useState(false)
     const [Change, setChange] = useState(false)
-
+    const [Filter, setFilter] = useState("All")
 
 
     useLayoutEffect(() => {
@@ -45,10 +48,8 @@ export const OrderUi = () => {
                             // Data.push(responseData.orderlist)
                         }
                         responseData.orderlist.map(item => {
-                            if (item.status != 'Delivered') {
-                                const row = { id: item.id, customer_name: item.user_detail[0], phone: item.user_detail[1], location: item.user_detail[2], status: item.status }
-                                rows.push(row)
-                            }
+                            const row = { id: item.id, customer_name: item.user_detail[0], phone: item.user_detail[1], location: item.user_detail[2], status: item.status }
+                            rows.push(row)
                         });
                         setTimeout(() => {
                             const data = Array.from(new Set(rows.map(JSON.stringify))).map(JSON.parse);
@@ -137,12 +138,20 @@ export const OrderUi = () => {
 
     }
     useEffect(() => {
-    }, [Change])
+    }, [Change, Filter])
+
 
 
     const theme = createTheme();
 
-
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: 200,
+                width: 250,
+            },
+        },
+    };
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: "#1976D2",
@@ -171,6 +180,26 @@ export const OrderUi = () => {
                 {!ShowTable && <div className='ml-auto'>
                     <Typography varient="h4">
                         Loading</Typography></div>}
+
+                {ShowTable && <Stack spacing={2} sx={{ marginBottom: 4 }} direction={"row"}>
+                    <label >Select Filter</label>
+                    <Select
+                        sx={{ height: 30, width: 150 }}
+                        labelId="demo-multiple-name-label"
+                        id="demo-multiple-name"
+                        value={Filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        MenuProps={MenuProps}
+
+                    >
+                        <MenuItem value='All'>All</MenuItem>
+                        <MenuItem value='Pending'>Pending</MenuItem>
+                        <MenuItem value='Waiting'>Waiting</MenuItem>
+                        <MenuItem value='Completed'>Completed</MenuItem>
+                        <MenuItem value='Delivered'>Delivered</MenuItem>
+
+                    </Select>
+                </Stack>}
                 {ShowTable && rows && <TableContainer component={Paper}>
                     <Table >
                         <TableHead >
@@ -187,7 +216,8 @@ export const OrderUi = () => {
                         </TableHead>
                         <TableBody>
                             {rows.map((row, index) => (
-                                <StyledTableRow key={index}>
+
+                                Filter == "All" ? <StyledTableRow key={index}>
                                     <StyledTableCell align="center">{index + 1}</StyledTableCell>
                                     <StyledTableCell align="center">{row.id}</StyledTableCell>
                                     <StyledTableCell align="center">{row.customer_name}</StyledTableCell>
@@ -207,7 +237,29 @@ export const OrderUi = () => {
                                             handleReject(row.id, index)
                                         }} size='small' color='error' variant="contained">Reject</Button>}</StyledTableCell>
 
-                                </StyledTableRow>
+                                </StyledTableRow> :
+                                    row.status == Filter && <StyledTableRow key={index}>
+                                        <StyledTableCell align="center">{index + 1}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.id}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.customer_name}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.phone}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.location}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.status}</StyledTableCell>
+
+                                        <StyledTableCell align="center">{row.status != "Delivered" &&
+                                            <Button sx={{ marginRight: 2 }} onClick={() => {
+                                                let status = checkstatus(row.status)
+                                                handleAccept(row, status)
+                                                row.status = status
+                                            }}
+                                                size='small' variant="contained">{checkstatus(row.status)}</Button>}
+
+                                            {row.status == "Pending" && <Button onClick={() => {
+                                                handleReject(row.id, index)
+                                            }} size='small' color='error' variant="contained">Reject</Button>}</StyledTableCell>
+
+                                    </StyledTableRow>
+
                             )
                             )}
                         </TableBody>
