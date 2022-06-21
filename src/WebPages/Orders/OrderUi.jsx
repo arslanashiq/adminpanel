@@ -43,7 +43,16 @@ export const OrderUi = () => {
   useLayoutEffect(() => {
     fetchData();
   }, []);
-
+  const HandleOpenDetail = (row) => {
+    setDataDetail(row);
+    setTimeout(() => {
+      console.log("Open",DataDetail)
+      setOpenDetail(true);
+    }, 50);
+  };
+  const HandleCloseDetail = () => {
+    setOpenDetail(false);
+  };
   const fetchData = () => {
     const url = URL.My_Database_Url + "orders";
     if (rows.length == 0) {
@@ -209,104 +218,114 @@ export const OrderUi = () => {
           </Alert>
         </Snackbar>
 
-        <Dialog
-          sx={{ height: 600 }}
-          open={OpenDetail}
-          onClose={() => setOpenDetail(false)}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle color={"black"} sx={{ fontWeight: "700" }} variant="h6">
-            Order Detail
-          </DialogTitle>
-          <DialogContent className="mb-0">
-            <DialogContentText id="alert-dialog-description">
-              <Typography
+        {DataDetail!=''&& (
+          <Dialog
+            sx={{ height: 600 }}
+            open={OpenDetail}
+            onClose={HandleCloseDetail}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogContent className="mb-0">
+              <DialogTitle
                 color={"black"}
-                sx={{ fontWeight: "600" }}
-                variant="subtitle2"
+                sx={{ fontWeight: "700" }}
+                variant="h6"
               >
-                Customer Information
-              </Typography>
-              <Typography variant="body2">
-                <span>Order ID : </span>
-                <span>{DataDetail._id}</span>
-              </Typography>
-
-              <Typography variant="body2">
-                <span>Customer Name : </span>
-                <span>{DataDetail.user_detail[0]}</span>
-              </Typography>
-
-              <Typography variant="body2">
-                <span>Phone # : </span>
-                <span>{DataDetail.user_detail[1]}</span>
-              </Typography>
-              <Typography variant="body2">
-                <span>Delivery Location : </span>
-                <span>{DataDetail.user_detail[2]}</span>
-              </Typography>
-              <Typography
-                color={"black"}
-                sx={{ fontWeight: "600" }}
-                variant="subtitle1"
-              >
-                Order List
-              </Typography>
-              {DataDetail.order_detail.map((item, index) => (
-                <Typography variant="body2">
-                  <span>{index + 1 + ".  "}</span>
-                  <span>{item.name}</span>
-                  <span>({item.size})</span>
-                  <span> x {" " + item.quantity}</span>
-                  <span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </span>
-
-                  <span>{item.price * item.quantity} Rs</span>
+                Order Detail
+              </DialogTitle>
+              <DialogContentText id="alert-dialog-description">
+                <Typography
+                  color={"black"}
+                  sx={{ fontWeight: "600" }}
+                  variant="subtitle2"
+                >
+                  Customer Information
                 </Typography>
-              ))}
-              <Divider
-                sx={{
-                  marginTop: 3,
-                  marginBottom: 3,
-                  borderWidth: 2,
-                  color: "black",
-                }}
-              />
+                <Typography variant="body2">
+                  <span>Order ID : </span>
+                  <span>{DataDetail._id}</span>
+                </Typography>
 
-              <Typography
-                color={"black"}
-                sx={{ fontWeight: "600" }}
-                variant="subtitle1"
-              >
-                Total Price : {DataDetail.total_price}
-              </Typography>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              size="small"
-              color="error"
-              variant="contained"
-              onClick={() => setOpenDetail(false)}
-            >
-              Close
-            </Button>
-            {DataDetail.status != "Delivered" && (
+                <Typography variant="body2">
+                  <span>Customer Name : </span>
+                  <span>{DataDetail.user_detail[0]}</span>
+                </Typography>
+
+                <Typography variant="body2">
+                  <span>Phone # : </span>
+                  <span>{DataDetail.user_detail[1]}</span>
+                </Typography>
+                <Typography variant="body2">
+                  <span>Delivery Location : </span>
+                  <span>{DataDetail.user_detail[2]}</span>
+                </Typography>
+                <Typography
+                  color={"black"}
+                  sx={{ fontWeight: "600" }}
+                  variant="subtitle1"
+                >
+                  Order List
+                </Typography>
+                {DataDetail.order_detail.map((item, index) => (
+                  <Typography variant="body2">
+                    <span>{index + 1 + ".  "}</span>
+                    <span>{item.name}</span>
+                    <span>({item.size})</span>
+                    <span> x {" " + item.quantity}</span>
+                    <span>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+
+                    <span>{item.price * item.quantity} Rs</span>
+                  </Typography>
+                ))}
+                <Divider
+                  sx={{
+                    marginTop: 3,
+                    marginBottom: 3,
+                    borderWidth: 2,
+                    color: "black",
+                  }}
+                />
+
+                <Typography
+                  color={"black"}
+                  sx={{ fontWeight: "600" }}
+                  variant="subtitle1"
+                >
+                  Total Price : {DataDetail.total_price}
+                </Typography>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
               <Button
                 size="small"
-                color="success"
+                color="error"
                 variant="contained"
-                onClick={() => setOpenDetail(false)}
-                autoFocus
+                onClick={HandleCloseDetail}
               >
-                proceed
+                Close
               </Button>
-            )}
-          </DialogActions>
-        </Dialog>
-
+              {DataDetail.status != "Delivered" && (
+                <Button
+                  size="small"
+                  color="success"
+                  variant="contained"
+                  onClick={() => {
+                    let status = checkstatus(DataDetail.status);
+                    handleAccept(DataDetail, status);
+                    DataDetail.status = status;
+                    HandleCloseDetail();
+                  }}
+                  autoFocus
+                >
+                  proceed
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
+        )}
         {ShowTable && (
           <Stack spacing={2} sx={{ marginBottom: 4 }} direction={"row"}>
             <label>Select Filter</label>
@@ -353,11 +372,7 @@ export const OrderUi = () => {
                       <StyledTableCell
                         className="cursor-dot-pointer"
                         align="center"
-                        onClick={() => {
-                          console.log(row, "row");
-                          setDataDetail(row);
-                          setOpenDetail(true);
-                        }}
+                        onClick={() => HandleOpenDetail(row)}
                       >
                         {row.id}
                       </StyledTableCell>
