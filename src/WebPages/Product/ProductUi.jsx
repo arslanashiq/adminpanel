@@ -78,7 +78,7 @@ export const ProductUi = () => {
                             console.log(rows)
 
                             setShowTable(true)
-                        }, 1200);
+                        }, 100);
 
                     } else {
                         console.log('fail');
@@ -136,12 +136,12 @@ export const ProductUi = () => {
                     <Typography varient="h4">
                         Loading</Typography></div>}
                 {ShowTable &&
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
+                    <Container  sx={{ mt: 4, mb: 4 }}>
+                        <Grid container >
 
                             {rows.map((item, index) => (
 
-                                <Card sx={{ width: 300, ml: 3, mt: 4 }}>
+                                <Card sx={{ width: 270, ml:4, mt: 4 }}>
                                     <CardHeader
                                         avatar={
                                             <Avatar sx={{ bgcolor: red[600] }} aria-label="recipe">

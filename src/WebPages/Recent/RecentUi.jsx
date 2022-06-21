@@ -80,7 +80,7 @@ export const RecentUi = () => {
                             console.log(rows)
 
                             setShowTable(true)
-                        }, 1200);
+                        }, 100);
 
                     } else {
                         console.log('fail');

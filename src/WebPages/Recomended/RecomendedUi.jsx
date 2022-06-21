@@ -82,7 +82,7 @@ export const RecomendedUi = () => {
                             console.log(rows)
 
                             setShowTable(true)
-                        }, 1200);
+                        }, 100);
                     } else {
                         console.log('fail');
                     }

@@ -99,7 +99,7 @@ export const CategoryUi = () => {
 
                             setShowTable(true)
                             console.log(rows)
-                        }, 500);
+                        }, 100);
 
                     } else {
                         console.log('fail');

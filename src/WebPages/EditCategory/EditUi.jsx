@@ -103,7 +103,7 @@ export const Edit = () => {
                         setImageUrl(d[0].image)
                         console.log(ImageUrl, ProductName)
                         setShowForm(true)
-                    }, 1000);
+                    }, 100);
                 } else {
                     console.log('fail');
                 }
