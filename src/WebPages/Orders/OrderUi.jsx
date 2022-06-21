@@ -246,8 +246,6 @@ export const OrderUi = () => {
                 <span>Delivery Location : </span>
                 <span>{DataDetail.user_detail[2]}</span>
               </Typography>
-            </DialogContentText>
-            <DialogContentText id="alert-dialog-description">
               <Typography
                 color={"black"}
                 sx={{ fontWeight: "600" }}
@@ -268,17 +266,15 @@ export const OrderUi = () => {
                   <span>{item.price * item.quantity} Rs</span>
                 </Typography>
               ))}
-            </DialogContentText>
-            <Divider
-              sx={{
-                marginTop: 3,
-                marginBottom: 3,
-                borderWidth: 2,
-                color: "black",
-              }}
-            />
+              <Divider
+                sx={{
+                  marginTop: 3,
+                  marginBottom: 3,
+                  borderWidth: 2,
+                  color: "black",
+                }}
+              />
 
-            <DialogContentText id="alert-dialog-title">
               <Typography
                 color={"black"}
                 sx={{ fontWeight: "600" }}
