@@ -422,38 +422,27 @@ export const OrderUi = () => {
                         <StyledTableCell align="center">
                           {index + 1}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        <StyledTableCell
+                          className="cursor-dot-pointer"
+                          align="center"
+                          onClick={() => HandleOpenDetail(row)}
+                        >
                           {row.id}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row.customer_name}
+                          {row.user_detail[0]}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row.phone}
+                          {row.user_detail[1]}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row.location}
+                          {row.user_detail[2]}
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           {row.status}
                         </StyledTableCell>
 
-                        <StyledTableCell align="center">
-                          {row.status != "Delivered" && (
-                            <Button
-                              sx={{ marginRight: 2 }}
-                              onClick={() => {
-                                let status = checkstatus(row.status);
-                                handleAccept(row, status);
-                                row.status = status;
-                              }}
-                              size="small"
-                              variant="contained"
-                            >
-                              {checkstatus(row.status)}
-                            </Button>
-                          )}
-
+                        <StyledTableCell style={{ width: 200 }} align="center">
                           {row.status == "Pending" && (
                             <Button
                               onClick={() => {
@@ -464,6 +453,20 @@ export const OrderUi = () => {
                               variant="contained"
                             >
                               Reject
+                            </Button>
+                          )}
+                          {row.status != "Delivered" && (
+                            <Button
+                              sx={{ marginLeft: 2 }}
+                              onClick={() => {
+                                let status = checkstatus(row.status);
+                                handleAccept(row, status);
+                                row.status = status;
+                              }}
+                              size="small"
+                              variant="contained"
+                            >
+                              {checkstatus(row.status)}
                             </Button>
                           )}
                         </StyledTableCell>
