@@ -25,10 +25,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 
 export const OrderUi = () => {
-  const navigate = useNavigate();
   const [rows, setrows] = useState([]);
   const [Data, setData] = useState([]);
-  const [DataChange, setDataChange] = useState(true);
   const [ShowTable, setShowTable] = useState(false);
   const [Change, setChange] = useState(false);
   const [Filter, setFilter] = useState("All");
