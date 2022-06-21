@@ -46,7 +46,7 @@ export const OrderUi = () => {
   const HandleOpenDetail = (row) => {
     setDataDetail(row);
     setTimeout(() => {
-      console.log("Open",DataDetail)
+      console.log("Open", DataDetail);
       setOpenDetail(true);
     }, 50);
   };
@@ -218,7 +218,7 @@ export const OrderUi = () => {
           </Alert>
         </Snackbar>
 
-        {DataDetail!=''&& (
+        {DataDetail != "" && (
           <Dialog
             sx={{ height: 600 }}
             open={OpenDetail}
