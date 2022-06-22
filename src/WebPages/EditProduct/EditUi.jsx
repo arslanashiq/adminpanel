@@ -45,7 +45,6 @@ export const Edit = () => {
   const [ShowForm, setShowForm] = useState(false);
   useLayoutEffect(() => {
     fetchCategory();
-    fetchproduct(params.id);
   }, []);
 
   const MenuProps = {
@@ -104,14 +103,7 @@ export const Edit = () => {
             console.log("Data Found Successfully");
             console.log(responseData);
             setCategory(responseData.foodcategoryList);
-
-            setTimeout(() => {
-              const data = Array.from(
-                new Set(Category.map(JSON.stringify))
-              ).map(JSON.parse);
-              console.log("Data is : ", data);
-              setCategory(data);
-            }, 100);
+            fetchproduct(params.id);
           } else {
             console.log("fail");
           }

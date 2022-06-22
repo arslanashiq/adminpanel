@@ -34,6 +34,11 @@ export const OrderUi = () => {
   const [OpenReject, setOpenReject] = useState(false);
   const [OpenDetail, setOpenDetail] = useState(false);
   const [DataDetail, setDataDetail] = useState([]);
+  const [OpenDel, setOpenDel] = useState(false);
+  const [DeletedData, setDeletedData] = useState({
+    id: "",
+    index: "",
+  });
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -125,6 +130,7 @@ export const OrderUi = () => {
       });
   };
   const handleReject = (id, index) => {
+    setOpenDel(false);
     const url = URL.My_Database_Url + "orders/" + id;
     fetch(url, {
       method: "DELETE",
@@ -183,6 +189,54 @@ export const OrderUi = () => {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main">
+        <Dialog
+          open={OpenDel}
+          onClose={() => setOpenDel(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent className="mb-0">
+            <DialogTitle
+              color={"black"}
+              sx={{ fontWeight: "700" }}
+              variant="h6"
+            >
+              Confirmation
+            </DialogTitle>
+            <DialogContentText id="alert-dialog-description">
+              <Typography
+                color={"black"}
+                sx={{ fontWeight: "600" }}
+                variant="subtitle2"
+              >
+                Are you Realy want to delete Order
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setOpenDel(false);
+              }}
+              size="small"
+              color="error"
+              variant="contained"
+            >
+              No
+            </Button>
+            <Button
+              size="small"
+              color="success"
+              variant="contained"
+              onClick={() => {
+                handleReject(DeletedData.id, DeletedData.index);
+              }}
+              autoFocus
+            >
+              proceed
+            </Button>
+          </DialogActions>
+        </Dialog>
         {!ShowTable && (
           <div className="ml-auto">
             <Typography varient="h4">Loading</Typography>
@@ -391,7 +445,9 @@ export const OrderUi = () => {
                         {row.status == "Pending" && (
                           <Button
                             onClick={() => {
-                              handleReject(row.id, index);
+                              DeletedData.id = row._id;
+                              DeletedData.index = index;
+                              setOpenDel(true);
                             }}
                             size="small"
                             color="error"
@@ -446,7 +502,9 @@ export const OrderUi = () => {
                           {row.status == "Pending" && (
                             <Button
                               onClick={() => {
-                                handleReject(row.id, index);
+                                DeletedData.id = row._id;
+                                DeletedData.index = index;
+                                setOpenDel(true);
                               }}
                               size="small"
                               color="error"
