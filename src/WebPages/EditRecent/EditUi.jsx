@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState,useEffect, useLayoutEffect } from "react";
 import { Container, Typography } from "@mui/material";
 // import { styled } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { URL } from "../../Constants/DataBaseURL";
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import Select from "@mui/material/Select";
 
@@ -41,6 +42,10 @@ export const Edit = () => {
   const [Ingredient, setIngredient] = useState([]);
   const [ingname, setingname] = useState("");
   const [ShowForm, setShowForm] = useState(false);
+  const [Del, setDel] = useState(false)
+  useEffect(() => {
+
+  }, [Del])
   useLayoutEffect(() => {
     fetchCategory();
   }, []);
@@ -295,6 +300,8 @@ export const Edit = () => {
                       {index + 1}) Name : {item[0]}
                     </label>
                     <label>Price : {item[1]}</label>
+                    <RemoveCircleOutlineIcon onClick={() => { Size.splice(index, 1); setDel(!Del) }} pointer color='error' />
+
                   </Stack>
                 ))}
               </Stack>
@@ -340,6 +347,8 @@ export const Edit = () => {
                     <label>
                       {index + 1}) {item}
                     </label>
+                    <RemoveCircleOutlineIcon onClick={() => { Ingredient.splice(index, 1); setDel(!Del) }} pointer color='error' />
+
                   </Stack>
                 ))}
               </Stack>

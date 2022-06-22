@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
@@ -43,9 +44,14 @@ export const Edit = () => {
   const [ingname, setingname] = useState("");
   const [UploadType, setUploadType] = useState("products");
   const [ShowForm, setShowForm] = useState(false);
+  const [Del, setDel] = useState(false)
+  useEffect(() => {
+
+  }, [Del])
   useLayoutEffect(() => {
     fetchCategory();
   }, []);
+  
 
   const MenuProps = {
     PaperProps: {
@@ -297,6 +303,7 @@ export const Edit = () => {
                       {index + 1}) Name : {item[0]}
                     </label>
                     <label>Price : {item[1]}</label>
+                    <RemoveCircleOutlineIcon onClick={() => { Size.splice(index, 1); setDel(!Del) }} pointer color='error' />
                   </Stack>
                 ))}
               </Stack>
@@ -338,10 +345,11 @@ export const Edit = () => {
                   </Typography>
                 )}
                 {Ingredient.map((item, index) => (
-                  <Stack spacing={3} direction={"row"}>
+                  <Stack spacing={5} direction={"row"}>
                     <label>
                       {index + 1}) {item}
                     </label>
+                    <RemoveCircleOutlineIcon onClick={() => { Ingredient.splice(index, 1); setDel(!Del) }} pointer color='error' />
                   </Stack>
                 ))}
               </Stack>
