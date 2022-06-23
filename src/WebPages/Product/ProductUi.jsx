@@ -12,7 +12,9 @@ import Grid from "@mui/material/Grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ButtonGroup from "@mui/material/ButtonGroup";
-
+import Stack from "@mui/material/Stack";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import { URL } from "../../Constants/DataBaseURL";
 
 import Tooltip from "@mui/material/Tooltip";
@@ -21,6 +23,7 @@ import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import { red } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
+import TextField from '@mui/material/TextField';
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Snackbar from "@mui/material/Snackbar";
@@ -32,6 +35,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
+import { letterSpacing } from "@mui/system";
 
 export const ProductUi = () => {
   const navigate = useNavigate();
@@ -39,7 +43,10 @@ export const ProductUi = () => {
   const [rows, setrows] = useState([]);
   const [Delete, setDelete] = useState(true);
   const [OpenDetail, setOpenDetail] = useState(false);
+  const [Filter, setFilter] = useState("All");
   const [DeletedMessage, setDeletedMessage] = useState(false);
+  const [Category, setCategory] = useState([])
+  const [SeachValue, setSeachValue] = useState("")
   const [DelededData, setDelededData] = useState({
     id: "",
     index: "",
@@ -69,44 +76,69 @@ export const ProductUi = () => {
 
   const fetchData = () => {
     const url = URL.My_Database_Url + "products";
-    if (rows.length == 0) {
-      fetch(url, {
-        method: "GET",
+
+    fetch(url, {
+      method: "GET",
+    })
+      .then((response) => response.text())
+      .then(async (responseText) => {
+        let responseData = JSON.parse(responseText);
+        if (responseData.status == 200) {
+          console.log("Data Found Successfully");
+          responseData.productlist.map((item) => {
+            let row = item;
+            rows.push(row);
+          });
+          setTimeout(() => {
+            const data = Array.from(new Set(rows.map(JSON.stringify))).map(
+              JSON.parse
+            );
+            console.log("Data is : ", data);
+
+            setrows(data);
+            console.log(rows);
+
+            setShowTable(true);
+          }, 100);
+        } else {
+          console.log("fail");
+        }
       })
-        .then((response) => response.text())
-        .then(async (responseText) => {
+      .catch((error) => {
+        console.log(error, "error from APi UploadData1212");
+      });
+
+  };
+  const fetchfoodcategory = () => {
+    const url = URL.My_Database_Url + 'foodcategories';
+    if (Category.length === 0) {
+
+      fetch(url, {
+        method: 'GET',
+      })
+        .then(response => response.text())
+        .then(async responseText => {
           let responseData = JSON.parse(responseText);
-          if (responseData.status == 200) {
-            console.log("Data Found Successfully");
-            responseData.productlist.map((item) => {
-              let row = item;
-              rows.push(row);
-            });
-            setTimeout(() => {
-              const data = Array.from(new Set(rows.map(JSON.stringify))).map(
-                JSON.parse
-              );
-              console.log("Data is : ", data);
+          if (responseData.status === 200) {
+            console.log(' category Data Found Successfully');
+            console.log(responseData)
+            setCategory(responseData.foodcategoryList)
 
-              setrows(data);
-              console.log(rows);
-
-              setShowTable(true);
-            }, 100);
+            fetchData();
           } else {
-            console.log("fail");
+            console.log('fail');
           }
         })
-        .catch((error) => {
-          console.log(error, "error from APi UploadData1212");
+        .catch(error => {
+          console.log(error, 'error from APi UploadData1212');
         });
     }
-  };
+  }
   useLayoutEffect(() => {
-    fetchData();
+    fetchfoodcategory();
   }, []);
 
-  useEffect(() => {}, [Delete]);
+  useEffect(() => { }, [Delete]);
 
   const handledelete = () => {
     setOpenDetail(false);
@@ -136,7 +168,27 @@ export const ProductUi = () => {
   };
 
   const theme = createTheme();
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: 200,
+        width: 250,
+      },
+    },
+  };
+  const SerchResult = (productname) => {
 
+    for (let letter in SeachValue) {
+      if (productname[letter] == SeachValue[letter].toLowerCase() ||
+        productname[letter] == SeachValue[letter].toUpperCase()) {
+        continue
+      }
+      else {
+        return false
+      }
+    }
+    return true;
+  }
   return (
     <ThemeProvider theme={theme}>
       <Container component="main">
@@ -207,112 +259,237 @@ export const ProductUi = () => {
           </div>
         )}
         {ShowTable && (
+          <Stack spacing={1} sx={{ marginBottom: 4 }} direction={"column"}>
+            <Stack>
+              <label>Select Filter</label>
+              <Select
+                sx={{ height: 30, width: 200 }}
+                labelId="demo-multiple-name-label"
+                id="demo-multiple-name"
+                value={Filter}
+                onChange={(e) => setFilter(e.target.value)}
+                MenuProps={MenuProps}
+              >
+                <MenuItem value="All">1. All</MenuItem>
+                {Category.map((item, index) => (
+                  <MenuItem key={index} value={item.name} > {2 + index}. {item.name}</MenuItem>
+                ))}
+
+
+              </Select>
+            </Stack>
+            <TextField sx={{ height: 30,width: 200 }} value={SeachValue} onChange={(e) => { e.target.value != " " && setSeachValue(e.target.value) }} label="Search" variant="outlined" />
+
+          </Stack>
+        )}
+        {ShowTable && (
           <Container sx={{ mt: 4, mb: 4 }}>
             <Grid container>
-              {rows.map((item, index) => (
-                <Card sx={{ width: 270, ml: 4, mt: 4 }}>
-                  <CardHeader
-                    avatar={
-                      <Avatar sx={{ bgcolor: red[600] }} aria-label="recipe">
-                        <LocalDiningIcon />
-                      </Avatar>
-                    }
-                    action={
-                      <ButtonGroup
-                        variant="contained"
-                        aria-label="outlined primary button group"
-                      >
-                        <IconButton
-                          onClick={() => {
-                            handleedit(item.id);
-                          }}
-                          aria-label="settings"
+              {Filter == "All" ?
+                rows.map((item, index) => (
+                  (SerchResult(item.name)) && <Card sx={{ width: 270, ml: 4, mt: 4 }}>
+                    <CardHeader
+                      avatar={
+                        <Avatar sx={{ bgcolor: red[600] }} aria-label="recipe">
+                          <LocalDiningIcon />
+                        </Avatar>
+                      }
+                      action={
+                        <ButtonGroup
+                          variant="contained"
+                          aria-label="outlined primary button group"
                         >
-                          <Tooltip title="Edit">
-                            <EditIcon color="primary" />
-                          </Tooltip>
-                        </IconButton>
-
-                        <IconButton
-                          onClick={() => {
-                            DelededData.id = item.id;
-                            DelededData.index = index;
-                            setOpenDetail(true);
-                          }}
-                          aria-label="settings"
-                        >
-                          <Tooltip title="Delete">
-                            <DeleteIcon color="error" />
-                          </Tooltip>
-                        </IconButton>
-                      </ButtonGroup>
-                    }
-                    title={item.name}
-                    subheader={item.category}
-                  />
-                  <CardMedia
-                    component="img"
-                    height="194"
-                    image={item.image}
-                    alt="Paella dish"
-                  />
-                  <CardContent>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.info}
-                    </Typography>
-                  </CardContent>
-                  <CardActions disableSpacing>
-                    <ExpandMore
-                      expand={expanded}
-                      onClick={handleExpandClick}
-                      aria-expanded={expanded}
-                      aria-label="show more"
-                    >
-                      <ExpandMoreIcon />
-                    </ExpandMore>
-                  </CardActions>
-                  <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <CardContent>
-                      <Typography variant="h5" paragraph>
-                        Types :{" "}
-                      </Typography>
-                      {item.size &&
-                        item.size.map((s) => (
-                          <Typography
-                            variant="subtitle1"
-                            sx={{ color: "black" }}
-                            paragraph
+                          <IconButton
+                            onClick={() => {
+                              handleedit(item.id);
+                            }}
+                            aria-label="settings"
                           >
-                            {s[0]} = {s[1]} Rs
-                          </Typography>
-                        ))}
-                      {!item.size && (
-                        <Typography paragraph>No Size Available</Typography>
-                      )}
-                      <Typography paragraph></Typography>
+                            <Tooltip title="Edit">
+                              <EditIcon color="primary" />
+                            </Tooltip>
+                          </IconButton>
 
-                      <Typography variant="h5" paragraph>
-                        Ingredients :{" "}
+                          <IconButton
+                            onClick={() => {
+                              DelededData.id = item.id;
+                              DelededData.index = index;
+                              setOpenDetail(true);
+                            }}
+                            aria-label="settings"
+                          >
+                            <Tooltip title="Delete">
+                              <DeleteIcon color="error" />
+                            </Tooltip>
+                          </IconButton>
+                        </ButtonGroup>
+                      }
+                      title={item.name}
+                      subheader={item.category}
+                    />
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={item.image}
+                      alt="Paella dish"
+                    />
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.info}
                       </Typography>
-                      {item.list &&
-                        item.list.map((ingr, idx) => (
-                          <Typography sx={{ color: "red" }}>{ingr}</Typography>
-                        ))}
-                      {!item.list && (
-                        <Typography paragraph>
-                          No Ingredients List Available
-                        </Typography>
-                      )}
-                      <Typography paragraph></Typography>
                     </CardContent>
-                  </Collapse>
-                </Card>
-              ))}
+                    <CardActions disableSpacing>
+                      <ExpandMore
+                        expand={expanded}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                      >
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    </CardActions>
+                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                      <CardContent>
+                        <Typography variant="h5" paragraph>
+                          Types :{" "}
+                        </Typography>
+                        {item.size &&
+                          item.size.map((s) => (
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ color: "black" }}
+                              paragraph
+                            >
+                              {s[0]} = {s[1]} Rs
+                            </Typography>
+                          ))}
+                        {!item.size && (
+                          <Typography paragraph>No Size Available</Typography>
+                        )}
+                        <Typography paragraph></Typography>
+
+                        <Typography variant="h5" paragraph>
+                          Ingredients :{" "}
+                        </Typography>
+                        {item.list &&
+                          item.list.map((ingr, idx) => (
+                            <Typography sx={{ color: "red" }}>{ingr}</Typography>
+                          ))}
+                        {!item.list && (
+                          <Typography paragraph>
+                            No Ingredients List Available
+                          </Typography>
+                        )}
+                        <Typography paragraph></Typography>
+                      </CardContent>
+                    </Collapse>
+                  </Card>
+                ))
+                : rows.map((item, index) => (
+                  item.category == Filter &&
+                  SerchResult(item.name) && <Card sx={{ width: 270, ml: 4, mt: 4 }}>
+                    <CardHeader
+                      avatar={
+                        <Avatar sx={{ bgcolor: red[600] }} aria-label="recipe">
+                          <LocalDiningIcon />
+                        </Avatar>
+                      }
+                      action={
+                        <ButtonGroup
+                          variant="contained"
+                          aria-label="outlined primary button group"
+                        >
+                          <IconButton
+                            onClick={() => {
+                              handleedit(item.id);
+                            }}
+                            aria-label="settings"
+                          >
+                            <Tooltip title="Edit">
+                              <EditIcon color="primary" />
+                            </Tooltip>
+                          </IconButton>
+
+                          <IconButton
+                            onClick={() => {
+                              DelededData.id = item.id;
+                              DelededData.index = index;
+                              setOpenDetail(true);
+                            }}
+                            aria-label="settings"
+                          >
+                            <Tooltip title="Delete">
+                              <DeleteIcon color="error" />
+                            </Tooltip>
+                          </IconButton>
+                        </ButtonGroup>
+                      }
+                      title={item.name}
+                      subheader={item.category}
+                    />
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={item.image}
+                      alt="Paella dish"
+                    />
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.info}
+                      </Typography>
+                    </CardContent>
+                    <CardActions disableSpacing>
+                      <ExpandMore
+                        expand={expanded}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                      >
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    </CardActions>
+                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                      <CardContent>
+                        <Typography variant="h5" paragraph>
+                          Types :{" "}
+                        </Typography>
+                        {item.size &&
+                          item.size.map((s) => (
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ color: "black" }}
+                              paragraph
+                            >
+                              {s[0]} = {s[1]} Rs
+                            </Typography>
+                          ))}
+                        {!item.size && (
+                          <Typography paragraph>No Size Available</Typography>
+                        )}
+                        <Typography paragraph></Typography>
+
+                        <Typography variant="h5" paragraph>
+                          Ingredients :{" "}
+                        </Typography>
+                        {item.list &&
+                          item.list.map((ingr, idx) => (
+                            <Typography sx={{ color: "red" }}>{ingr}</Typography>
+                          ))}
+                        {!item.list && (
+                          <Typography paragraph>
+                            No Ingredients List Available
+                          </Typography>
+                        )}
+                        <Typography paragraph></Typography>
+                      </CardContent>
+                    </Collapse>
+                  </Card>
+                ))}
             </Grid>
           </Container>
         )}
       </Container>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 };
 export default ProductUi;
